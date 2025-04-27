@@ -60,6 +60,15 @@ improvement.</p>
   the default binding space.
 </p>
 
+<p>
+  If a definition creates an identifier binding belonging to a binding
+  space, we say that the definition bind the identifier in that
+  binding space. An identifier can be bound by more than one
+  definition in the same body and in the same binding space. In such a
+  case, later definitions shadow earlier ones for the rest of the
+  body.
+</p>
+
 <p>An identifier can be imported with the same local name from two or
   more libraries or for two or more levels from the same library only
   if the binding exported by each library is the same for each binding
@@ -69,28 +78,59 @@ improvement.</p>
 <p>Unless otherwise said, definitions and binding constructs bind
   identifiers in the default binding space.</p>
 
-<p><u>Syntax:</u> <b><code>define-binding-space</code></b> &lt;binding space&gt; [<var>&lt;guard expression&gt;</var>]</p>
+<p><u>Syntax:</u> <b><code>define-binding-space</code></b> &lt;binding space&gt; [&lt;guard expression&gt;]</p>
 
-<p>The <code>define-binding-space</code> form is a &lt;definition&gt;.</p>
+<p>The <code>define-binding-space</code> form is a definition.</p>
 
 <p>Binds &lt;binding space&gt; to a newly created binding space, a
   kind of syntax.  If &lt;guard expression&gt; is present, it is
   evaluated at expand-time to yield a <var>guard procedure</var>,
-  which is then associated with the binding space.  It is an assertion
+  which is then associated with the binding space.</p>
+
+<p>It is an assertion
   violation if the &lt;guard expression&gt; does not evaluate to a
   procedure.
 </p>
 
-<p><u>Syntax:</u> <b><code>define-binding-in</code></b> <var>&lt;binding space&gt;</var> <var>&lt;identifier&gt;</var> <var>&lt;expression&gt;</var></p>
+<p><u>Syntax:</u> <b><code>define-binding-in</code></b> &lt;binding space&gt; &lt;identifier&gt; &lt;expression&gt;</p>
 
-<p><u>Syntax:</u> <b><code>resolve-binding-in</code></b> <var>&lt;binding-space&gt;</var> <var>&lt;identifier-expression&gt;</var> [<var>&lt;default expression&gt;</var>]
+<p>The <code>define-binding-in</code> form is a definition.</p>
 
-<p><u>Syntax:</u> <b><code>define-export-set</code></b> <var>&lt;identifier&gt;</var>
-  (<var>&lt;binding-space&gt;</var> <var>&lt;exported-identifier&gt;</var> &hellip;) &hellip;
+<p>The &lt;expression&gt; is evaluated at expand-time to yield a value
+and the &lt;identifier&gt; is bound to it in the &lt;binding
+space&gt;. It the &lt;identifier&gt; is not bound in the default
+binding space, it is bound to a type of syntax for which it is a
+syntax violation if it appears in &lt;keyword&gt; position.</p>
 
-<p><u>Syntax:</u> <b><code>import-bindings</code></b> <var>&lt;import-bindings&gt;</var> <var>&lt;export-set&gt;</var> &hellip;
+<p>It is a syntax violation if &lt;binding space&gt; does not name a binding space.</p>
 
-<p><u>Procedure:</u> <b><code>make-binding-space-transformer</code></b> <var>procedure</var>
+<p><u>Procedure:</u> <b><code>make-binding-space-transformer</code></b> <var>procedure</var></p>
+
+<p>The <var>procedure</var> should accept one argument, a wrapped
+syntax object, and return a syntax object.</p>
+
+<p>The <code>make-binding-space-transformer</code> procedure creates a
+<dfn>binding space transformer</dfn>. A binding space transformer is
+like an ordinary transformer except that within the dynamic extent of
+the transformer call from the expander,
+the <code>resolve-binding-in</code> (see below) procedure may be
+called.
+
+<p><u>Syntax:</u> <b><code>resolve-binding-in</code></b> <var>binding-space-name</var> <var>identifier</var> [<var>default</var>]
+
+<p>The <var>binding-space-name</var> must be an identifier naming a binding space.</p>
+
+<p>The <code>resolve-binding-in</code> returns the lexical binding of
+  the <var>identifier</var> in the binding space named
+  by <var>binding-space-name</var> or <var>default</var> if the
+  identifier is not bound in the binding space.  If <var>default</var>
+  is not present, the value <code>#f</code> is used instead.
+</p>
+
+<p><u>Syntax:</u> <b><code>define-export-set</code></b> &lt;identifier&gt;
+  (&lt;binding-space&gt; &lt;exported-identifier&gt; &hellip;) &hellip;
+
+<p><u>Syntax:</u> <b><code>import-bindings</code></b> &lt;import-bindings&gt; &lt;export-set&gt; &hellip;
 
 <h2 id="implementation">Implementation</h2>
 
