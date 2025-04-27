@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+SPDX-FileCopyrightText: [year] [copyright holder]
+SPDX-License-Identifier: MIT
+-->
+  <head>
+    <meta charset="utf-8">
+    <title>SRFI 261: Binding Spaces</title>
+    <link href="/favicon.png" rel="icon" sizes="192x192" type="image/png">
+    <link rel="stylesheet" href="https://srfi.schemers.org/srfi.css" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1"></head>
+  <body>
+    <h1><a href="https://srfi.schemers.org/"><img class="srfi-logo" src="https://srfi.schemers.org/srfi-logo.svg" alt="SRFI surfboard logo" /></a>261: Binding Spaces</h1>
+
+<p>by Marc Nieper-Wißkirchen</p>
+
+<h2 id="status">Status</h2>
+
+<p style="color: red;">For editor's use only.  Please do not edit this section.</p>
+
+<p>??? the draft/final/withdrawn status of the SRFI, information on how
+to subscribe to its mailing list, and important dates in its history.
+The editor will add this section.</p>
+
+<h2 id="abstract">Abstract</h2>
+
+<p>The concept of binding spaces is introduced. Each identifier cannot
+only have a binding in the default binding space, e.g. as a variable,
+a keyword, a pattern variable or a record name, but simulateneously
+also in other binding spaces. This allows to give an identifier
+meanings depending on the context in which the identifier is
+used. This can be used to implement DSLs, type systems, and otherwise
+rich macros.
+</p>
+
+<h2 id="issues">Issues</h2>
+
+<p>The names of the syntax and procedures are subject to changes.</p>
+
+<h2 id="rationale">Rationale</h2>
+
+<p>??? detailed rationale.  This should be 200-500 words long.  Please
+explain why the proposal should be incorporated as a standard feature
+in Scheme implementations.  List related standards and SRFIs,
+including dependencies, conflicts, and replacements.  If there are
+other standards which this proposal will replace or with which it will
+compete, please explain why the present proposal is a substantial
+improvement.</p>
+
+<h2 id="specification">Specification</h2>
+
+<p>
+  Each identifier binding belongs to a <dfn>binding space</dfn>.  The
+  identifier bindings described in the R<sup>n</sup>RS belong to the
+  <dfn>default binding space</dfn>.  Bindings belonging to other
+  binding spaces are called <dfn>secondary bindings</dfn>.  A binding
+  shadows only bindings belonging to the same binding space.  An
+  indentifier can only have secondary binding if it is also bound in
+  the default binding space.
+</p>
+
+<p>An identifier can be imported with the same local name from two or
+  more libraries or for two or more levels from the same library only
+  if the binding exported by each library is the same for each binding
+  space.
+</p>
+
+<p>Unless otherwise said, definitions and binding constructs bind
+  identifiers in the default binding space.</p>
+
+<p><u>Syntax:</u> <b><code>define-binding-space</code></b> &lt;binding space&gt; [<var>&lt;guard expression&gt;</var>]</p>
+
+<p>The <code>define-binding-space</code> form is a &lt;definition&gt;.</p>
+
+<p>Binds &lt;binding space&gt; to a newly created binding space, a
+  kind of syntax.  If &lt;guard expression&gt; is present, it is
+  evaluated at expand-time to yield a <var>guard procedure</var>,
+  which is then associated with the binding space.  It is an assertion
+  violation if the &lt;guard expression&gt; does not evaluate to a
+  procedure.
+</p>
+
+<p><u>Syntax:</u> <b><code>define-binding-in</code></b> <var>&lt;binding space&gt;</var> <var>&lt;identifier&gt;</var> <var>&lt;expression&gt;</var></p>
+
+<p><u>Syntax:</u> <b><code>resolve-binding-in</code></b> <var>&lt;binding-space&gt;</var> <var>&lt;identifier-expression&gt;</var> [<var>&lt;default expression&gt;</var>]
+
+<p><u>Syntax:</u> <b><code>define-export-set</code></b> <var>&lt;identifier&gt;</var>
+  (<var>&lt;binding-space&gt;</var> <var>&lt;exported-identifier&gt;</var> &hellip;) &hellip;
+
+<p><u>Syntax:</u> <b><code>import-bindings</code></b> <var>&lt;import-bindings&gt;</var> <var>&lt;export-set&gt;</var> &hellip;
+
+<p><u>Procedure:</u> <b><code>make-binding-space-transformer</code></b> <var>procedure</var>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>This SRFI is accompanied by a
+mostly-portable <a href="binding-spaces.sls">sample
+implementation</a>.  It depends on the special
+forms <code>define-property</code>, <code>meta</code>,
+and <code>quote-syntax</code> found in Chez Scheme.</p>
+
+<p>The <code>define-property</code> form is also available
+  through <a href="https://srfi.schemers.org/srfi-213/srfi-213.html">SRFI
+  213</a>. The <code>meta</code> form is used to deal with phasing in
+  R6RS. The <code>quote-syntax</code> is used in non-essential ways.
+</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<p>The author was inspired by typical use cases of identifier
+  properties as defined by Chez Scheme and by Racket's solution through
+  binding spaces.
+</p>
+
+<h2 id="copyright">Copyright</h2>
+<p>&copy; 2025 Marc Nieper-Wißkirchen.</p>
+
+<p>
+  Permission is hereby granted, free of charge, to any person
+  obtaining a copy of this software and associated documentation files
+  (the "Software"), to deal in the Software without restriction,
+  including without limitation the rights to use, copy, modify, merge,
+  publish, distribute, sublicense, and/or sell copies of the Software,
+  and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:</p>
+
+<p>
+  The above copyright notice and this permission notice (including the
+  next paragraph) shall be included in all copies or substantial
+  portions of the Software.</p>
+<p>
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.</p>
+
+  <hr>
+  <address>Editor: <a href="mailto:srfi-editors+at+srfi+dot+schemers+dot+org">Arthur A. Gleckler</a></address></body></html>
