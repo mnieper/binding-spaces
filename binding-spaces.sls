@@ -100,7 +100,7 @@
                     (unless (binding-space? binding-space)
                       (syntax-violation 'resolve-binding-in "invalid binding space"
                         what binding-space-name))
-                    (guard (c [(syntax-violation? c) #f])
+                    (guard (c [(syntax-violation? c) default])
                       (cond
                         [(lookup id (binding-space-property-key binding-space)) =>
                          (lambda (property-id)
@@ -185,13 +185,13 @@
                (with-syntax
                    ([(((import-id property-key property) ...) ...)
                      (map
-                       (lambda (export-set)
+                       (lambda (export-set-name export-set)
                          (map
-                           (lambda (export-set-name export)
+                           (lambda (export)
                              (list (datum->syntax export-set-name (export-symbol export))
                                (export-property-key export) (export-property export)))
-                           #'(export-set-name ...) export-set))
-                       export-sets)])
+                            export-set))
+                       #'(export-set-name ...) export-sets)])
                  #'(begin
                      (define-property import-id property-key #'property)
                      ... ...)))]))))))
