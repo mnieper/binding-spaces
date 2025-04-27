@@ -12,9 +12,9 @@ The `define-binding-space` form is a definition, binding `<identifier>` to a new
 
 The `define-binding-in` form is a definition.  The `<expression>` is evaluated at expand-time and `<identifier>` is bound to its value in the binding space named by `<binding-space>`. It is a syntax violation if `<binding-space>` does not name a binding space. If a guard procedure is associated with `<binding-space>`, the result of evaluating `<expression>` is first mapped by the procedure to obtain the final value. A binding in the default binding space for `<identifier>` is created if `<identifier>` was previously unbound.
 
-    resolve-binding-in <binding-space> <identifier-expression>
+    resolve-binding-in <binding-space> <identifier-expression> [<default-expression>]
 
-The `resolve-binding` expression evaluates the `<identifier-expression>` to obtain an identifier and returns the binding of the identifier in `<binding-space>` or #f if there is no such binding. It is an assertion violation if `<identifier-expression>` does not evaluate to an identifier. It is a syntax violation if `<binding-space>` does not name a binding-space. It is an assertion violation to invoke `resolve-binding-in` outside the dynamic extent of a macro invocation calling a binding space transformer procedure (see `make-binding-space-transformer` below).
+The `resolve-binding` expression evaluates the `<identifier-expression>` to obtain an identifier and returns the binding of the identifier in `<binding-space>` or the value of the `<default-expression>` if there is no such binding. If there is no `<default-expression>`, that value is #f. It is an assertion violation if `<identifier-expression>` does not evaluate to an identifier. It is a syntax violation if `<binding-space>` does not name a binding-space. It is an assertion violation to invoke `resolve-binding-in` outside the dynamic extent of a macro invocation calling a binding space transformer procedure (see `make-binding-space-transformer` below).
 
     define-export-set <identifier> (<binding-space> <exported-identifier> ...)
 
@@ -28,4 +28,4 @@ The `import-bindings` form is a definition, binding, for each `<export-set>` the
 
     make-binding-space-transformer PROCEDURE
 
-Turns the transformer procedure `PROCEDURE` in a binding space transformer procedure.
+Turns the transformer procedure `PROCEDURE` into a binding space transformer procedure.
